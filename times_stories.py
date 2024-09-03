@@ -22,7 +22,6 @@ class TimeStoriesHandler(http.server.SimpleHTTPRequestHandler):
         html = response.read().decode("utf-8")
 
         stories = []
-        # Find the start of the stories section
         start_index = html.find('<div class="latest-stories">')
         if start_index != -1:
             html = html[start_index:]
@@ -37,15 +36,12 @@ class TimeStoriesHandler(http.server.SimpleHTTPRequestHandler):
                 title_end = html.find('</a>', title_start)
                 title = html[title_start:title_end].strip()
 
-                # Clean title of any embedded HTML tags
                 title = title.split('>')[-1]
 
                 stories.append(f'<li><a href="{link}" target="_blank">{title}</a></li>')
 
-                # Move the search start position
                 html = html[title_end:]
 
-        # If no stories are found, display a message
         if not stories:
             stories_html = "<p>No stories found. The structure of Time.com may have changed.</p>"
         else:
@@ -65,7 +61,6 @@ class TimeStoriesHandler(http.server.SimpleHTTPRequestHandler):
         
         return stories_html
 
-# Start the server
 with socketserver.TCPServer(("", PORT), TimeStoriesHandler) as httpd:
     print(f"Serving on port {PORT}")
     httpd.serve_forever()
